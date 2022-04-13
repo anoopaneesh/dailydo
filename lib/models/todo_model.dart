@@ -27,14 +27,20 @@ class Todo{
     completed = false;
   }
 
-  Todo.fromTodo({required Todo todo}){
-    title = todo.title;
-    desc = todo.desc;
-    date = todo.date;
-    time = todo.time;
-    completed = todo.completed;
-    createdAt = todo.createdAt;
-    updatedAt = todo.updatedAt;
+  void toggleComplete(){
+    completed = !completed;
+  }
+  void update({String? title,String? desc,DateTime? date,TimeOfDay? time,bool? completed}){
+    this.title = title ?? this.title;
+    this.desc = desc ?? this.desc;
+    this.date = date ?? this.date;
+    this.time = time ?? this.time;
+    this.completed = completed ?? this.completed;
+    updatedAt = DateTime.now();
+  }
+
+  void setId(int id){
+    this.id = id;
   }
 
   @override

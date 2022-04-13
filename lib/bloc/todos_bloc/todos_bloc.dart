@@ -13,7 +13,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       try {
         final todoBox = await Hive.openBox<Todo>('todoBox');
         final hId = await todoBox.add(event.todo);
-        event.todo.id = hId;
+        event.todo.setId(hId);
         await todoBox.putAt(hId, event.todo);
         newList = [event.todo, ...newList];
       } catch (e) {
@@ -25,7 +25,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<ToggleCompleted>((event, emit) async {
       Todo todo =
           state.todolist.firstWhere((element) => element.id == event.id);
-      todo.completed = !todo.completed;
+      todo.toggleComplete();
       try {
         final todoBox = await Hive.openBox<Todo>('todoBox');
         await todoBox.put(todo.id, todo);
@@ -45,11 +45,12 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<EditTodo>((event, emit) async {
       final index =
           state.todolist.indexWhere((element) => element.id == event.id);
-      state.todolist[index].title = event.title;
-      state.todolist[index].desc = event.desc;
-      state.todolist[index].date = event.date;
-      state.todolist[index].time = event.time;
-      state.todolist[index].updatedAt = DateTime.now();
+
+      state.todolist[index].update(
+          title: event.title,
+          desc: event.desc,
+          date: event.date,
+          time: event.time);
 
       try {
         final todoBox = await Hive.openBox<Todo>('todoBox');
@@ -78,7 +79,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         final todoBox = await Hive.openBox<Todo>('todoBox');
         newList = todoBox.keys.map((key) {
           final todo = todoBox.get(key)!;
-          todo.id = key;
+          todo.setId(key);
           return todo;
         }).toList();
       } catch (e) {
