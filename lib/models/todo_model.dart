@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 part 'todo_model.g.dart';
 
 @HiveType(typeId: 0)
-class Todo{
+class Todo extends Equatable{
   @HiveField(0)
   int? id;
   @HiveField(1)
@@ -21,10 +22,10 @@ class Todo{
   @HiveField(7)
   late DateTime updatedAt;
 
-  Todo({required this.title,required  this.desc,required this.date,required this.time}){
-    createdAt = DateTime.now();
-    updatedAt = DateTime.now();
-    completed = false;
+  Todo({this.id,required this.title,required  this.desc,required this.date,required this.time,bool? completed,DateTime? updatedAt,DateTime? createdAt}){
+    this.createdAt = createdAt ?? DateTime.now();
+    this.updatedAt = updatedAt ?? DateTime.now();
+    this.completed = completed ?? false;
   }
 
   void toggleComplete(){
@@ -45,6 +46,9 @@ class Todo{
 
   @override
   String toString() {
-     return "Todo{ id:$id,title:$title,desc:$desc }";
-  } 
+     return "Todo{ id:$id,title:$title,desc:$desc,completed:$completed }";
+  }
+
+  @override
+  List<Object?> get props => [id,title,desc,completed,createdAt,updatedAt,date,time]; 
 }

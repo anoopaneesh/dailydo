@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:todo_app/helpers/database_helper.dart';
 import 'package:todo_app/models/todo_model.dart';
 
@@ -23,22 +23,16 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     });
 
     on<ToggleCompleted>((event, emit) async {
-      Todo todo =
-          state.todolist.firstWhere((element) => element.id == event.id);
-      todo.toggleComplete();
+      if(state.todolist.isEmpty) return;
+      Todo todo = state.todolist.firstWhere((element) => element.id == event.id);
+      state.todolist.removeWhere((element) => element.id == event.id);
       try {
-        await databaseHelper.updateTodo(todo.id!,completed:todo.completed);
+        todo = await databaseHelper.updateTodo(todo.id!,completed:!(todo.completed));
       } catch (e) {
         rethrow;
       }
-      List<Todo> newList = [];
-      for (var element in state.todolist) {
-        if (element.id != event.id) {
-          newList.add(element);
-        }
-      }
-      newList.add(todo);
-      return emit(TodosState(todolist: newList));
+      state.todolist.add(todo);
+      return emit(TodosState(todolist: state.todolist));
     });
 
     on<EditTodo>((event, emit) async {

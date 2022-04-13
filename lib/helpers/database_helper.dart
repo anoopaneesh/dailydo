@@ -15,7 +15,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> updateTodo(int key,
+  Future<Todo> updateTodo(int key,
       {String? title,
       String? desc,
       DateTime? date,
@@ -23,8 +23,7 @@ class DatabaseHelper {
       bool? completed}) async {
     try {
       final todoBox = await Hive.openBox<Todo>('todoBox');
-      final todo = todoBox.get(key);
-      if (todo == null) return;
+      final todo = todoBox.get(key)!;
       todo.update(
           title: title,
           desc: desc,
@@ -32,6 +31,8 @@ class DatabaseHelper {
           time: time,
           completed: completed);
       await todoBox.put(key, todo);
+      todo.id = key;
+      return todo;
     } catch (err) {
       rethrow;
     }
