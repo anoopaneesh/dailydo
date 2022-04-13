@@ -60,6 +60,49 @@ void main() {
       expect: () => [TodosState(todolist: MockData.toggledData)],
     );
 
+    blocTest<TodosBloc, TodosState>(
+      'testing edittodo event',
+      build: () {
+        when(databaseHelper.getAllTodos())
+            .thenAnswer((_) async => Future.value([...MockData.mockTodosData]));
+        when(databaseHelper.updateTodo(1,title: 'Edited Title',desc:'Edited Desc' ,time: MockData.time,date: MockData.createdAt)).thenAnswer((_) async {
+          final todo = Todo(
+              id: 1,
+              title: 'Edited Title',
+              desc: 'Edited Desc',
+              date: MockData.createdAt,
+              time:MockData.time,
+              createdAt: MockData.createdAt,
+              updatedAt: MockData.updatedAt);
+          return Future.value(todo);
+        });
+        return todoBloc;
+      },
+      act: (bloc) async{
+        bloc.add(GetAllTodos());
+        await Future.delayed(const Duration(milliseconds: 1000));
+        bloc.add(EditTodo(1,title: 'Edited Title',desc:'Edited Desc' ,time: MockData.time,date: MockData.createdAt));
+      },
+      expect: () => <TodosState>[TodosState(todolist: MockData.editedData)],
+    );
+
+    blocTest<TodosBloc, TodosState>(
+      'testing deletetodo event',
+      build: () {
+        when(databaseHelper.getAllTodos())
+            .thenAnswer((_) async => Future.value([...MockData.mockTodosData]));
+        when(databaseHelper.deleteTodo(1)).thenAnswer((_) async => Future.value());
+        return todoBloc;
+      },
+      act: (bloc) async {
+        bloc.add(GetAllTodos());
+        await Future.delayed(const Duration(milliseconds: 1000));
+        bloc.add(DeleteTodo(1));
+      },
+      expect: () =>  <TodosState>[TodosState(todolist: MockData.deletedData)],
+    );
+
+
     tearDown(() {
       todoBloc.close();
     });

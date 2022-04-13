@@ -36,21 +36,17 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     });
 
     on<EditTodo>((event, emit) async {
-      final index =
-          state.todolist.indexWhere((element) => element.id == event.id);
-
-      state.todolist[index].update(
-          title: event.title,
-          desc: event.desc,
-          date: event.date,
-          time: event.time);
+      var todo =
+          state.todolist.firstWhere((element) => element.id == event.id);
+      state.todolist.removeWhere((element) => element.id == event.id);
 
       try {
-        await databaseHelper.updateTodo(state.todolist[index].id!,
+        todo = await databaseHelper.updateTodo(todo.id!,
             title: event.title,
             desc: event.desc,
             date: event.date,
             time: event.time);
+        state.todolist.add(todo);
       } catch (e) {
         rethrow;
       }
@@ -59,9 +55,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     });
 
     on<DeleteTodo>((event, emit) async {
-      state.todolist.removeWhere((element) => element.id == event.id);
       try {
         await databaseHelper.deleteTodo(event.id!);
+        state.todolist.removeWhere((element) => element.id == event.id);
       } catch (e) {
         rethrow;
       }
