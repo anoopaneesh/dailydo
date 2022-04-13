@@ -1,20 +1,20 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:todo_app/helpers/database_helper.dart';
 import 'package:todo_app/models/todo_model.dart';
 
 part 'todos_event.dart';
 part 'todos_state.dart';
 
 class TodosBloc extends Bloc<TodosEvent, TodosState> {
-  TodosBloc() : super(TodosInitialState()) {
+  final DatabaseHelper databaseHelper;
+  TodosBloc(this.databaseHelper) : super(TodosInitialState()) {
     on<AddTodo>((event, emit) async {
       var newList = state.todolist;
       try {
-        final todoBox = await Hive.openBox<Todo>('todoBox');
-        final hId = await todoBox.add(event.todo);
+        final hId = await databaseHelper.addTodo(todo: event.todo);
         event.todo.setId(hId);
-        await todoBox.putAt(hId, event.todo);
         newList = [event.todo, ...newList];
       } catch (e) {
         rethrow;
@@ -27,8 +27,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
           state.todolist.firstWhere((element) => element.id == event.id);
       todo.toggleComplete();
       try {
-        final todoBox = await Hive.openBox<Todo>('todoBox');
-        await todoBox.put(todo.id, todo);
+        await databaseHelper.updateTodo(todo.id!,completed:todo.completed);
       } catch (e) {
         rethrow;
       }
@@ -53,8 +52,11 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
           time: event.time);
 
       try {
-        final todoBox = await Hive.openBox<Todo>('todoBox');
-        await todoBox.put(state.todolist[index].id, state.todolist[index]);
+        await databaseHelper.updateTodo(state.todolist[index].id!,
+            title: event.title,
+            desc: event.desc,
+            date: event.date,
+            time: event.time);
       } catch (e) {
         rethrow;
       }
@@ -65,8 +67,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<DeleteTodo>((event, emit) async {
       state.todolist.removeWhere((element) => element.id == event.id);
       try {
-        final todoBox = await Hive.openBox<Todo>('todoBox');
-        await todoBox.delete(event.id);
+        await databaseHelper.deleteTodo(event.id!);
       } catch (e) {
         rethrow;
       }
@@ -76,12 +77,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<GetAllTodos>((event, emit) async {
       List<Todo> newList = [];
       try {
-        final todoBox = await Hive.openBox<Todo>('todoBox');
-        newList = todoBox.keys.map((key) {
-          final todo = todoBox.get(key)!;
-          todo.setId(key);
-          return todo;
-        }).toList();
+        newList = await databaseHelper.getAllTodos();
       } catch (e) {
         rethrow;
       }

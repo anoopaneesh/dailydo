@@ -28,7 +28,7 @@ class Todo{
   }
 
   void toggleComplete(){
-    completed = !completed;
+    update(completed: !completed);
   }
   void update({String? title,String? desc,DateTime? date,TimeOfDay? time,bool? completed}){
     this.title = title ?? this.title;
