@@ -22,10 +22,10 @@ class TodoAdapter extends TypeAdapter<Todo> {
       desc: fields[2] as String,
       date: fields[3] as DateTime,
       time: fields[4] as TimeOfDay,
-    )
-      ..completed = fields[5] as bool
-      ..createdAt = fields[6] as DateTime
-      ..updatedAt = fields[7] as DateTime;
+      completed: fields[5] as bool?,
+      updatedAt: fields[7] as DateTime?,
+      createdAt: fields[6] as DateTime?,
+    );
   }
 
   @override

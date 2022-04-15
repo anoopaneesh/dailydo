@@ -6,7 +6,6 @@ class TodosState extends Equatable{
   const TodosState({required this.todolist});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [todolist];
 
 }

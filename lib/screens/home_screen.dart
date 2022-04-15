@@ -16,7 +16,11 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('To Do'),
         actions: [
-          IconButton(onPressed: (){_homeHelper.logout(context);}, icon: const Icon(Icons.logout))
+          IconButton(
+              onPressed: () {
+                _homeHelper.logout(context);
+              },
+              icon: const Icon(Icons.logout))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -37,38 +41,53 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              
               Expanded(
                 child: BlocBuilder<TodosBloc, TodosState>(
                   builder: (context, state) {
-                    return state.todolist.isEmpty ? Center(
-                      child: SvgPicture.asset('assets/images/no_task.svg'),
-                    ) :  ListView.separated(
-                      itemBuilder: (BuildContext ctx, int index) {
-                        final item = state.todolist[index];
-                        return Dismissible(
-                          direction: DismissDirection.endToStart,
-                          background: Container(),
-                          secondaryBackground: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            alignment: Alignment.centerRight,
-                            color: Colors.red,
-                            child:const Icon(Icons.delete_forever,color: Colors.white,),
-                          ),
-                          key: ObjectKey(item),
-                          child: TodoWidget(item: item),
-                          onDismissed: (direction){
-                            _homeHelper.deleteTodo(context,item.id);
-                          },
-                        );
-                      },
-                      separatorBuilder: (BuildContext ctx, _) {
-                        return const SizedBox(
-                          height: 20,
-                        );
-                      },
-                      itemCount: state.todolist.length,
-                    );
+                    return state.todolist.isEmpty
+                        ? Center(
+                            child:
+                                SvgPicture.asset('assets/images/no_task.svg'),
+                          )
+                        : ListView.separated(
+                            itemBuilder: (BuildContext ctx, int index) {
+                              final item = state.todolist[index];
+                              return Dismissible(
+                                direction: DismissDirection.endToStart,
+                                background: Container(),
+                                secondaryBackground: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  alignment: Alignment.centerRight,
+                                  color: Colors.red,
+                                  child: const Icon(
+                                    Icons.delete_forever,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                key: ObjectKey(item),
+                                child: TodoWidget(
+                                  item: item,
+                                  onTap: () {
+                                    _homeHelper.navigateToTodoEdit(
+                                        context, item);
+                                  },
+                                  onChanged: (bool? value) {
+                                    _homeHelper.toggleCompleted(context, item);
+                                  },
+                                ),
+                                onDismissed: (direction) {
+                                  _homeHelper.deleteTodo(context, item.id);
+                                },
+                              );
+                            },
+                            separatorBuilder: (BuildContext ctx, _) {
+                              return const SizedBox(
+                                height: 20,
+                              );
+                            },
+                            itemCount: state.todolist.length,
+                          );
                   },
                 ),
               )

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/bloc/todos_bloc/todos_bloc.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:todo_app/screens/edit_task_screen.dart';
 
 class TodoWidget extends StatelessWidget {
   final Todo item;
-  final getDate =  DateFormat('d/M/y'); 
-  TodoWidget({Key? key, required this.item}) : super(key: key);
+  final getDate = DateFormat('d/M/y');
+  final void Function()? onTap;
+  final void Function(bool?)? onChanged;
+  TodoWidget(
+      {Key? key,
+      required this.item,
+      this.onTap,
+      this.onChanged})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (BuildContext ctx) => EditTaskScreen(item),
-          ),
-        );
-      },
+      key: const ValueKey('hello'),
+      onTap:onTap,
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
@@ -35,9 +34,7 @@ class TodoWidget extends StatelessWidget {
           trailing: Checkbox(
             activeColor: const Color.fromARGB(255, 28, 31, 132),
             value: item.completed,
-            onChanged: (bool? currentVal) {
-              context.read<TodosBloc>().add(ToggleCompleted(item.id));
-            },
+            onChanged: onChanged,
           ),
           title: Text(
             item.title,

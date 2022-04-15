@@ -4,7 +4,7 @@ import 'package:todo_app/models/todo_model.dart';
 class MockData {
   static final updatedAt = DateTime(2003);
   static final createdAt = DateTime(2003);
-  static final time = const TimeOfDay(hour: 17, minute: 17);
+  static const time =  TimeOfDay(hour: 17, minute: 17);
   static final mockTodosData = [
     Todo(
         id: 1,

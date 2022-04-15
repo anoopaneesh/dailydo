@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/bloc/todos_bloc/todos_bloc.dart';
+import 'package:todo_app/demo_screen.dart';
 import 'package:todo_app/helpers/database_helper.dart';
 import 'package:todo_app/models/todo_model.dart';
 import 'package:todo_app/screens/home_screen.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primarySwatch: Colors.purple),
-        home: isAuthorized ? HomeScreen() : LoginPage(),
+        home:  DemoScreen()
+        // isAuthorized ? HomeScreen() : LoginPage(),
       ),
     );
   }
