@@ -32,6 +32,7 @@ class TodoWidget extends StatelessWidget {
             ]),
         child: ListTile(
           trailing: Checkbox(
+            key:ValueKey('check-${item.id}'),
             activeColor: const Color.fromARGB(255, 28, 31, 132),
             value: item.completed,
             onChanged: onChanged,

@@ -5,6 +5,7 @@ import 'package:todo_app/bloc/todos_bloc/todos_bloc.dart';
 import 'package:todo_app/helpers/home_helper.dart';
 import 'package:todo_app/screens/add_task_screen.dart';
 import 'package:todo_app/widgets/todo.dart';
+import 'package:todo_app/widgets/todolist.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -49,45 +50,13 @@ class HomeScreen extends StatelessWidget {
                             child:
                                 SvgPicture.asset('assets/images/no_task.svg'),
                           )
-                        : ListView.separated(
-                            itemBuilder: (BuildContext ctx, int index) {
-                              final item = state.todolist[index];
-                              return Dismissible(
-                                direction: DismissDirection.endToStart,
-                                background: Container(),
-                                secondaryBackground: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  alignment: Alignment.centerRight,
-                                  color: Colors.red,
-                                  child: const Icon(
-                                    Icons.delete_forever,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                key: ObjectKey(item),
-                                child: TodoWidget(
-                                  item: item,
-                                  onTap: () {
-                                    _homeHelper.navigateToTodoEdit(
-                                        context, item);
-                                  },
-                                  onChanged: (bool? value) {
-                                    _homeHelper.toggleCompleted(context, item);
-                                  },
-                                ),
-                                onDismissed: (direction) {
-                                  _homeHelper.deleteTodo(context, item.id);
-                                },
-                              );
-                            },
-                            separatorBuilder: (BuildContext ctx, _) {
-                              return const SizedBox(
-                                height: 20,
-                              );
-                            },
-                            itemCount: state.todolist.length,
-                          );
+                        : Todolist(list: state.todolist, onTodoClick: (item){
+                          _homeHelper.navigateToTodoEdit(context, item);
+                        }, onTodoToggle: (item){
+                          _homeHelper.toggleCompleted(context, item);
+                        }, onTodoDelete: (id){
+                          _homeHelper.deleteTodo(context, id);
+                        });
                   },
                 ),
               )
