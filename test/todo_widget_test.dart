@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:todo_app/helpers/home_helper.dart';
-import 'package:todo_app/widgets/demo.dart';
 import 'package:todo_app/widgets/todo.dart';
 import 'mock_data.dart';
 
